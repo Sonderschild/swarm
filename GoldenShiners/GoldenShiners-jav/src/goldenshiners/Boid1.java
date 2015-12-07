@@ -3,7 +3,11 @@ package goldenshiners;
 import java.awt.Color;
 import java.lang.Math;
 import java.util.ArrayList;
-
+/**
+ * 
+ * @author joscha
+ *
+ */
 public class Boid1 implements Boid{
 	private Vector2d[] lastForces;
 	private Vector2d location;
