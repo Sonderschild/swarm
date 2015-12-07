@@ -18,7 +18,7 @@ public class LeftPanel extends JPanel {
 	public LeftPanel() {
 		this.setLayout( new BoxLayout(this, BoxLayout.Y_AXIS) );
 		speedLabel=getLabel("Speed");
-		speedSlider = new JSlider(5,200,20);
+		speedSlider = new JSlider(5,2000,20);
 		//speedSlider.setMajorTickSpacing(25);
 		//speedSlider.setMinorTickSpacing(1);
 		//speedSlider.setPaintTicks(true);

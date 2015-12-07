@@ -12,6 +12,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import javax.swing.JPanel;
 import javax.swing.Timer;
@@ -21,7 +22,7 @@ public	class Space extends JPanel implements ActionListener, MouseListener {
 	private int delay = INITDELAY;
 	private Timer timer;
 	private LeftPanel leftSide;
-	
+
 	private Flock flocke;
 
 	double a_weight;
@@ -33,23 +34,22 @@ public	class Space extends JPanel implements ActionListener, MouseListener {
 
 	int r; //ausdehnung
 
-	public Space() {
-		this.flocke = flocke;
+	public Space(int width,int height) {
 		a_weight=1.2;
 		s_weight=1.5;
 		c_weight=1.4;
-		
+
 		r=2;
 
 		seePhi=Math.PI/4;
 		seeRad=20;
 		initTimer();
 		addMouseListener(this);
-		
+
 		flocke = new Flock();
 		for (int i = 0; i < 150; i++) {
 			//velo = new Vector2d(10*(rand.nextDouble()-0.5), 10*(rand.nextDouble()-0.5));
-		    flocke.addBoid(new Boid1(this.getWidth()/2,this.getHeight()/2));
+			flocke.addBoid(new Boid2(width/2,height/2));
 		}
 	}
 
@@ -86,7 +86,7 @@ public	class Space extends JPanel implements ActionListener, MouseListener {
 			g2d.setPaint((Paint) b.getColor());
 			g2d.draw(tri);
 			g2d.fill(tri);
-			
+
 		}
 
 
@@ -103,7 +103,7 @@ public	class Space extends JPanel implements ActionListener, MouseListener {
 		this.leftSide = leftSide;
 	}
 
-	
+
 	@Override
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
@@ -113,14 +113,21 @@ public	class Space extends JPanel implements ActionListener, MouseListener {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-	//System.out.println("Ich bin da");
+		//System.out.println("Ich bin da");
 		updateWeights();
 		flocke.run(a_weight, s_weight, c_weight);
 		flocke.setBorder(this.getWidth()-r,this.getHeight()-r);
 		//revalidate();
 		repaint();
 		timer.setDelay(leftSide.getSpeed());
-		
+		if (! flocke.getSpzeialBoids().isEmpty() ){
+			Boid b =flocke.getSpzeialBoids().get(0);
+			System.out.println(b.getLocation());
+			System.out.println(b.getVelocity());
+			System.out.println(b.getAccerleation());
+			System.out.println(Arrays.toString(b.getLastForces()));
+			
+		}
 	}
 
 	@Override

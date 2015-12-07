@@ -17,7 +17,7 @@ public interface Boid {
 	 * @param a_weight how much weight for ali
 	 * @param c_weight how much weight for cohesion
 	 */
-	public void run(ArrayList<Boid> Boids, double s_weight, double a_weight, double c_weight );
+	public void run(ArrayList<Boid> Boids, double a_weight, double s_weight, double c_weight );
 	
 	/**
 	 * Can this Boid see another Boid?
@@ -69,5 +69,11 @@ public interface Boid {
 	 * @param y y coordinate (of v vector)
 	 */
 	public void setVelocity(double x, double y) ;
+	
+	/**
+	 * Gets the last forces which b calculated
+	 * @return last forces (ali,sep,coh)
+	 */
+	public Vector2d[] getLastForces();
 }
 

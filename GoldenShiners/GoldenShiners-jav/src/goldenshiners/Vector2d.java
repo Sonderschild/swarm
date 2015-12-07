@@ -41,14 +41,14 @@ public class Vector2d {
 	}
 	
 	public void add(Vector2d v2){
-		x+=v2.getX();
-		y+=v2.getY();
+		x=x+v2.getX();
+		y=y+v2.getY();
 		return ;
 	}
 
 	public void sub(Vector2d v2){
-		x-=v2.getX();
-		y-=v2.getY(); 
+		x=x-v2.getX();
+		y=y-v2.getY(); 
 		return  ;
 	}
 	
@@ -88,8 +88,8 @@ public class Vector2d {
 	}
 
 	/**
-	 * Erzeugt zufälligen Vektor zwischen -(0.5,0.5) und (0.5,0.5) 
-	 * @return neuer zufälliger Vektor
+	 * Creates random vector between -(0.5,0.5) and (0.5,0.5) 
+	 * @return new random vetcor
 	 */
 	public static Vector2d random() {
 		double x;

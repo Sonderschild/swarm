@@ -31,8 +31,9 @@ public class Simulation extends JFrame {
 
     
     private void initUI() {
+    	
     	final JSplitPane split = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
-    	final Space space = new Space();
+    	final Space space = new Space(width,height);
     //	space.setVisible(true);
         split.setBottomComponent(space);
 		final LeftPanel sliderPanel = new LeftPanel();

@@ -5,7 +5,7 @@ import java.lang.Math;
 import java.util.ArrayList;
 
 public class Boid1 implements Boid{
-
+	private Vector2d[] lastForces;
 	private Vector2d location;
 	private Vector2d velocity;
 	private Vector2d acceleration;
@@ -18,6 +18,7 @@ public class Boid1 implements Boid{
 	private double seeRad; //ve´wing radius
 
 	Boid1(double x, double y, Vector2d velocity) {
+		lastForces = new Vector2d[3];
 		acceleration = new Vector2d(0, 0);
 
 		seePhi=Math.PI/2;
@@ -40,7 +41,7 @@ public class Boid1 implements Boid{
 		this(x,y,Vector2d.random());
 	}
 
-	public void run(ArrayList<Boid> boids, double s_weight, double a_weight, double c_weight ){ //double seePhi, double seeRad
+	public void run(ArrayList<Boid> boids, double a_weight, double s_weight, double c_weight ){ //double seePhi, double seeRad
 		flock( boids,s_weight,a_weight,c_weight);
 		update();
 	}
@@ -67,6 +68,9 @@ public class Boid1 implements Boid{
 		applyForce(sep);
 		applyForce(ali);
 		applyForce(coh);
+		lastForces[0] = ali;
+		lastForces[1] = sep;
+		lastForces[2] = coh;
 	}
 
 	// Method to update location
@@ -224,6 +228,9 @@ public class Boid1 implements Boid{
 	public void setVelocity(double x, double y) {
 		this.velocity = new Vector2d(x,y);
 	}
-
+	@Override
+	public Vector2d[] getLastForces() {
+		return lastForces;
+	}
 
 }

@@ -8,12 +8,12 @@ import java.util.ArrayList;
 import javax.swing.text.Position;
 
 public class Boid2 implements Boid{
-
+	private Vector2d[] lastForces;
 	private Vector2d location;
 	private Vector2d velocity;
 	private Vector2d acceleration;
 	private Color c1;
-	
+
 	private double fric; //
 	private double m; // mass
 	private double maxforce;    // Maximum steering force
@@ -23,6 +23,7 @@ public class Boid2 implements Boid{
 	private double seeRad; // viewing radius
 
 	Boid2(double x, double y, Vector2d velocity) {
+		lastForces = new Vector2d[3];
 		acceleration = new Vector2d(0, 0);
 		fric = 0.2;
 		seePhi=Math.PI/3;
@@ -36,22 +37,22 @@ public class Boid2 implements Boid{
 		maxspeed = 1.5;
 		maxforce = 0.05;
 	}
-	
+
 	Boid2(double x, double y) {
 		this(x,y,Vector2d.random());
 	}
 
-	public void run(ArrayList<Boid> Boids, double s_weight, double a_weight, double c_weight ){ //double seePhi, double seeRad
-		flock(Boids,s_weight,a_weight,c_weight);
+	public void run(ArrayList<Boid> Boids, double a_weight, double s_weight, double c_weight ){ //double seePhi, double seeRad
+		flock(Boids,a_weight,s_weight,c_weight);
 		update();
 	}
 
-	public void applyForce(Vector2d force) {
+	private void applyForce(Vector2d force) {
 		acceleration.add(Vector2d.multiply(force, 1/m));
 	}
 
 	// We accumulate a new acceleration each time based on three 
-	public void flock(ArrayList<Boid> allBoids, double s_weight, double a_weight, double c_weight) {
+	private void flock(ArrayList<Boid> allBoids, double a_weight, double s_weight, double c_weight) {
 		Vector2d force = new Vector2d();
 		ArrayList<Boid> Boids = new ArrayList<Boid>();
 		for (Boid b : allBoids){
@@ -61,13 +62,12 @@ public class Boid2 implements Boid{
 		Vector2d sep = separate(Boids);   // Separation
 		Vector2d ali = align(Boids);      // Alignment
 		Vector2d coh = cohesion(Boids);   // Cohesion
-		//System.out.println("Sep: "+sep);
-		//System.out.println("Ali: "+ali);
+
 		//System.out.println("Coh: "+coh);
 		// Arbitrarily weight these forces
 		double totalMag = sep.norm()+ali.norm()+coh.norm();
 		//System.out.println(totalMag);
-		
+
 		sep.limit(maxforce);
 		ali.limit(maxforce);
 		coh.limit(maxforce);
@@ -76,9 +76,15 @@ public class Boid2 implements Boid{
 		coh.multiply(c_weight);
 		// Add the force vectors to acceleration
 		//System.out.println(force);
-		force.add(coh);
-		force.add(sep);
+		//System.out.println("Sep: "+sep);
+		//System.out.println("Ali: "+ali);
 		force.add(ali);
+		force.add(sep);
+		force.add(coh);
+
+		lastForces[0] = ali;
+		lastForces[1] = sep;
+		lastForces[2] = coh;
 		//System.out.println(force);
 		//force.limit(maxforce);
 		applyForce(force);
@@ -97,23 +103,6 @@ public class Boid2 implements Boid{
 		acceleration.multiply(0);
 	}
 
-//	// A method that calculates and applies a steering force towards a target
-//	// STEER = DESIRED MINUS VELOCITY
-//	private Vector2d seek(Vector2d target) {
-//		Vector2d desired = Vector2d.sub(target, location);  // A vector pointing from the location to the target
-//		// Scale to maximum speed
-//		// desired.normalize();
-//		// desired.mult(maxspeed);
-//
-//		// Above two lines of code below could be condensed with new Vector2d setMag() method
-//		// Not using this method until Processing.js catches up
-//		desired.setMag(maxspeed);
-//
-//		// Steering = Desired minus Velocity
-//		Vector2d steer = Vector2d.sub(desired, velocity);
-//		//steer.limit(maxforce);  // Limit to maximum steering force
-//		return steer;
-//	}
 
 	// Separation
 	// Method checks for nearby Boids and steers away
@@ -128,7 +117,7 @@ public class Boid2 implements Boid{
 			// If the distance is greater than 0 and less than an arbitrary amount (0 when you are yourself)
 			if ((d > 0)) {
 				// Calculate vector pointing away from neighbor
-				diff.setMag(Math.pow(d, -1.5));       // Weight by distance
+				diff.setMag(Math.pow(d, -0.5));       // Weight by distance
 				steer.add(diff);
 				count++;            // Keep track of how many
 			}
@@ -141,7 +130,7 @@ public class Boid2 implements Boid{
 
 			// Implement Reynolds: Steering = Desired - Velocity
 			steer.sub(velocity);
-			steer.limit(maxforce);
+			//steer.limit(maxforce);
 		}
 		return steer;
 	}
@@ -158,17 +147,17 @@ public class Boid2 implements Boid{
 				count++;
 			}
 		}
-	
+
 		if (count > 0) {
 			sum.divide(count);
 			return Vector2d.sub(sum, location);
 			// Implement Reynolds: Steering = Desired - Velocity
 
-//			sum.setMag(maxspeed);
-//			Vector2d steer = Vector2d.sub(sum, velocity);
-//			steer.limit(maxforce);
-//			return steer;
-//			return sum;
+			//			sum.setMag(maxspeed);
+			//			Vector2d steer = Vector2d.sub(sum, velocity);
+			//			steer.limit(maxforce);
+			//			return steer;
+			//			return sum;
 		} 
 		else {
 			return new Vector2d(0, 0);
@@ -229,5 +218,10 @@ public class Boid2 implements Boid{
 	}
 	public void setVelocity(double x, double y) {
 		this.velocity = new Vector2d(x,y);
+	}
+
+	@Override
+	public Vector2d[] getLastForces() {
+		return lastForces;
 	}
 }
