@@ -24,26 +24,15 @@ public class Simulation extends JFrame {
     public Simulation() {
 		width= 555;
 		height = 444;
-		setupFlock();
+
         initUI();
     }
     
-    private void setupFlock(){
-    	//Vector2d velo;
-    	//Random rand;
-    	//rand = new Random();
-    	
-    	flocke = new Flock();
-    		for (int i = 0; i < 150; i++) {
-    			//velo = new Vector2d(10*(rand.nextDouble()-0.5), 10*(rand.nextDouble()-0.5));
-			    flocke.addBoid(new Boid(width/2,height/2));
-    		}
-    	return;
-    }
+
     
     private void initUI() {
     	final JSplitPane split = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
-    	final Space space = new Space(flocke);
+    	final Space space = new Space();
     //	space.setVisible(true);
         split.setBottomComponent(space);
 		final LeftPanel sliderPanel = new LeftPanel();

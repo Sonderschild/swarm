@@ -73,7 +73,7 @@ class Flock {
 		return (ArrayList<Boid>) spezialBoids.clone();
 	}
 
-	public void setBorder(double height, double width) {
+	public void setBorder(double width, double height) {
 		this.height = height;
 		this.width = width;
 		this.borderType = HARD;

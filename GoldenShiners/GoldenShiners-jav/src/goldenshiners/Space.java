@@ -33,7 +33,7 @@ public	class Space extends JPanel implements ActionListener, MouseListener {
 
 	int r; //ausdehnung
 
-	public Space(Flock flocke) {
+	public Space() {
 		this.flocke = flocke;
 		a_weight=1.2;
 		s_weight=1.5;
@@ -45,6 +45,12 @@ public	class Space extends JPanel implements ActionListener, MouseListener {
 		seeRad=20;
 		initTimer();
 		addMouseListener(this);
+		
+		flocke = new Flock();
+		for (int i = 0; i < 150; i++) {
+			//velo = new Vector2d(10*(rand.nextDouble()-0.5), 10*(rand.nextDouble()-0.5));
+		    flocke.addBoid(new Boid1(this.getWidth()/2,this.getHeight()/2));
+		}
 	}
 
 	private void initTimer() {
@@ -110,7 +116,7 @@ public	class Space extends JPanel implements ActionListener, MouseListener {
 	//System.out.println("Ich bin da");
 		updateWeights();
 		flocke.run(a_weight, s_weight, c_weight);
-		flocke.setBorder(this.getSize().getHeight()-r,this.getSize().getWidth()-r);
+		flocke.setBorder(this.getWidth()-r,this.getHeight()-r);
 		//revalidate();
 		repaint();
 		timer.setDelay(leftSide.getSpeed());
@@ -119,7 +125,7 @@ public	class Space extends JPanel implements ActionListener, MouseListener {
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		Boid b = new Boid(e.getX(),e.getY());
+		Boid b = new Boid2(e.getX(),e.getY());
 		b.setColor(Color.red);
 		flocke.addSpecialBoid(b);
 	}

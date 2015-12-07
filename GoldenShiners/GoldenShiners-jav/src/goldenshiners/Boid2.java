@@ -7,7 +7,7 @@ import java.util.ArrayList;
 
 import javax.swing.text.Position;
 
-public class Boid2 {
+public class Boid2 implements Boid{
 
 	private Vector2d location;
 	private Vector2d velocity;
@@ -20,7 +20,7 @@ public class Boid2 {
 	private double maxspeed;    // Maximum speed
 
 	private double seePhi; //  viewing angle
-	private double seeRad; //ve´wing radius
+	private double seeRad; // viewing radius
 
 	Boid2(double x, double y, Vector2d velocity) {
 		acceleration = new Vector2d(0, 0);
@@ -41,8 +41,8 @@ public class Boid2 {
 		this(x,y,Vector2d.random());
 	}
 
-	public void run(ArrayList<Boid2> Boid2s, double s_weight, double a_weight, double c_weight ){ //double seePhi, double seeRad
-		flock(Boid2s,s_weight,a_weight,c_weight);
+	public void run(ArrayList<Boid> Boids, double s_weight, double a_weight, double c_weight ){ //double seePhi, double seeRad
+		flock(Boids,s_weight,a_weight,c_weight);
 		update();
 	}
 
@@ -51,16 +51,16 @@ public class Boid2 {
 	}
 
 	// We accumulate a new acceleration each time based on three 
-	public void flock(ArrayList<Boid2> allBoid2s, double s_weight, double a_weight, double c_weight) {
+	public void flock(ArrayList<Boid> allBoids, double s_weight, double a_weight, double c_weight) {
 		Vector2d force = new Vector2d();
-		ArrayList<Boid2> Boid2s = new ArrayList<Boid2>();
-		for (Boid2 b : allBoid2s){
-			if (this.canSee(b)) Boid2s.add(b);
+		ArrayList<Boid> Boids = new ArrayList<Boid>();
+		for (Boid b : allBoids){
+			if (this.canSee(b)) Boids.add(b);
 		}
-		//System.out.println(Boid2s.size());
-		Vector2d sep = separate(Boid2s);   // Separation
-		Vector2d ali = align(Boid2s);      // Alignment
-		Vector2d coh = cohesion(Boid2s);   // Cohesion
+		//System.out.println(Boids.size());
+		Vector2d sep = separate(Boids);   // Separation
+		Vector2d ali = align(Boids);      // Alignment
+		Vector2d coh = cohesion(Boids);   // Cohesion
 		//System.out.println("Sep: "+sep);
 		//System.out.println("Ali: "+ali);
 		//System.out.println("Coh: "+coh);
@@ -116,13 +116,13 @@ public class Boid2 {
 //	}
 
 	// Separation
-	// Method checks for nearby Boid2s and steers away
-	private Vector2d separate (ArrayList<Boid2> Boid2s) {
+	// Method checks for nearby Boids and steers away
+	private Vector2d separate (ArrayList<Boid> Boids) {
 		Vector2d diff ;
 		Vector2d steer = new Vector2d(0, 0);
 		int count = 0;
-		// For every Boid2 in the system, check if it's too close
-		for (Boid2 other : Boid2s) {
+		// For every Boid in the system, check if it's too close
+		for (Boid other : Boids) {
 			diff = Vector2d.sub(location, other.getLocation());
 			double d = diff.norm();
 			// If the distance is greater than 0 and less than an arbitrary amount (0 when you are yourself)
@@ -147,14 +147,14 @@ public class Boid2 {
 	}
 
 	// Alignment
-	// For every nearby Boid2 in the system, calculate the average velocity
-	private Vector2d align (ArrayList<Boid2> Boid2s) {
+	// For every nearby Boid in the system, calculate the average velocity
+	private Vector2d align (ArrayList<Boid> Boids) {
 		Vector2d sum = new Vector2d(0, 0);
 		int count = 0;
-		for (Boid2 other : Boid2s) {
-			double d = Vector2d.dist(location, other.location);
+		for (Boid other : Boids) {
+			double d = Vector2d.dist(location, other.getLocation());
 			if ((d > 0) ) {
-				sum.add(other.velocity);
+				sum.add(other.getVelocity());
 				count++;
 			}
 		}
@@ -176,14 +176,14 @@ public class Boid2 {
 	}
 
 	// Cohesion
-	// For the average location (i.e. center) of all nearby Boid2s, calculate steering vector towards that location
-	private Vector2d cohesion (ArrayList<Boid2> Boid2s) {
+	// For the average location (i.e. center) of all nearby Boids, calculate steering vector towards that location
+	private Vector2d cohesion (ArrayList<Boid> Boids) {
 		Vector2d sum = new Vector2d(0, 0);   // Start with empty vector to accumulate all locations
 		int count = 0;
-		for (Boid2 other : Boid2s) {
-			double d = Vector2d.dist(location, other.location);
+		for (Boid other : Boids) {
+			double d = Vector2d.dist(location, other.getLocation());
 			if ((d > 0)) {
-				sum.add(other.location); // Add location
+				sum.add(other.getLocation()); // Add location
 				count++;
 			}
 		}
@@ -196,9 +196,9 @@ public class Boid2 {
 		}
 	}
 
-	public boolean canSee(Boid2 other){
+	public boolean canSee(Boid other){
 		//System.out.println(other.getLocation());
-		double d = Vector2d.dist(location, other.location);
+		double d = Vector2d.dist(location, other.getLocation());
 		if (d>0 && Math.abs(velocity.heading()-Vector2d.sub(other.getLocation(), location).heading())<seePhi && d <= seeRad){
 			return true;
 		}
