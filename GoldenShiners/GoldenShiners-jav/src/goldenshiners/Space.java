@@ -49,7 +49,7 @@ public	class Space extends JPanel implements ActionListener, MouseListener {
 		flocke = new Flock();
 		for (int i = 0; i < 150; i++) {
 			//velo = new Vector2d(10*(rand.nextDouble()-0.5), 10*(rand.nextDouble()-0.5));
-			flocke.addBoid(new Boid2(width/2,height/2));
+			flocke.addBoid(new Boid1(width/2,height/2));
 		}
 	}
 
@@ -121,18 +121,18 @@ public	class Space extends JPanel implements ActionListener, MouseListener {
 		repaint();
 		timer.setDelay(leftSide.getSpeed());
 		if (! flocke.getSpzeialBoids().isEmpty() ){
-			Boid b =flocke.getSpzeialBoids().get(0);
-			System.out.println(b.getLocation());
-			System.out.println(b.getVelocity());
-			System.out.println(b.getAccerleation());
-			System.out.println(Arrays.toString(b.getLastForces()));
+		//	Boid b =flocke.getSpzeialBoids().get(0);
+		//	System.out.println(b.getLocation());
+		//	System.out.println(b.getVelocity());
+		//	System.out.println(b.getAccerleation());
+		//	System.out.println(Arrays.toString(b.getLastForces()));
 			
 		}
 	}
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		Boid b = new Boid2(e.getX(),e.getY());
+		Boid b = new Boid1(e.getX(),e.getY());
 		b.setColor(Color.red);
 		flocke.addSpecialBoid(b);
 	}

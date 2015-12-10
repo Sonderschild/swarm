@@ -34,7 +34,7 @@ class Flock {
 			for (Boid ob : boids) {
 				if (!spezialBoids.contains(ob)) {
 					if(sb.canSee(ob)){
-						ob.setColor(c2);
+						ob.setColor(sb.getColor().darker().darker());
 					}
 				}
 			}

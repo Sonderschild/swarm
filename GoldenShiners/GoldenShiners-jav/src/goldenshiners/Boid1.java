@@ -9,6 +9,7 @@ import java.util.ArrayList;
  *
  */
 public class Boid1 implements Boid{
+	private ArrayList<Boid> icu;
 	private Vector2d[] lastForces;
 	private Vector2d location;
 	private Vector2d velocity;
@@ -22,11 +23,12 @@ public class Boid1 implements Boid{
 	private double seeRad; //ve´wing radius
 
 	Boid1(double x, double y, Vector2d velocity) {
+		icu = new ArrayList<Boid>();
 		lastForces = new Vector2d[3];
 		acceleration = new Vector2d(0, 0);
 
 		seePhi=Math.PI/2;
-		seeRad=80;
+		seeRad=40;
 		c1 = Color.black;
 
 
@@ -40,7 +42,7 @@ public class Boid1 implements Boid{
 		maxspeed = 1.5;
 		maxforce = 0.03;
 	}
-	
+
 	Boid1(double x, double y) {
 		this(x,y,Vector2d.random());
 	}
@@ -50,20 +52,19 @@ public class Boid1 implements Boid{
 		update();
 	}
 
-	public void applyForce(Vector2d force) {
+	private void applyForce(Vector2d force) {
 		// We could add mass here if we want A = F / M
 		acceleration.add(force);
 	}
 
 	// We accumulate a new acceleration each time based on three 
-	public void flock(ArrayList<Boid> allBoids, double s_weight, double a_weight, double c_weight) {
-		ArrayList<Boid> boids = new ArrayList<Boid>();
+	private void flock(ArrayList<Boid> allBoids, double s_weight, double a_weight, double c_weight) {
 		for (Boid b : allBoids){
-			if (this.canSee(b)) boids.add(b);
+			if (this.canSee(b) && ! (b.equals(b))) icu.add(b);
 		}
-		Vector2d sep = separate(boids);   // Separation
-		Vector2d ali = align(boids);      // Alignment
-		Vector2d coh = cohesion(boids);   // Cohesion
+		Vector2d sep = separate(allBoids);   // Separation
+		Vector2d ali = align(allBoids);      // Alignment
+		Vector2d coh = cohesion(allBoids);   // Cohesion
 		// Arbitrarily weight these forces
 		sep.multiply(s_weight);
 		ali.multiply(a_weight);
@@ -109,19 +110,17 @@ public class Boid1 implements Boid{
 	// Separation
 	// Method checks for nearby boids and steers away
 	private Vector2d separate (ArrayList<Boid> boids) {
-		Vector2d diff ;
-		double desiredseparation = 25.0;
-		Vector2d steer = new Vector2d(0, 0);
+		double desiredseparation = 45.0;
+		Vector2d steer = new Vector2d();
 		int count = 0;
 		// For every boid in the system, check if it's too close
 		for (Boid other : boids) {
-			double d = Vector2d.dist(this.location, other.getLocation());
+			double d = Vector2d.dist(location, other.getLocation());
 			// If the distance is greater than 0 and less than an arbitrary amount (0 when you are yourself)
 			if ((d > 0) && (d < desiredseparation)) {
 				// Calculate vector pointing away from neighbor
-				diff = Vector2d.sub(location, other.getLocation());
-				diff.normalize();
-				diff.divide(d);        // Weight by distance
+				Vector2d diff = Vector2d.sub(location, other.getLocation());
+				diff.setMag(Math.pow(d, -2));   // Weight by distance
 				steer.add(diff);
 				count++;            // Keep track of how many
 			}
@@ -133,13 +132,7 @@ public class Boid1 implements Boid{
 
 		// As long as the vector is greater than 0
 		if (steer.norm() > 0) {
-			// First two lines of code below could be condensed with new Vector2d setMag() method
-			// Not using this method until Processing.js catches up
-			// steer.setMag(maxspeed);
-
-			// Implement Reynolds: Steering = Desired - Velocity
-			steer.normalize();
-			steer.multiply(maxspeed);
+			steer.setMag(maxspeed);
 			steer.sub(velocity);
 			steer.limit(maxforce);
 		}
@@ -166,9 +159,9 @@ public class Boid1 implements Boid{
 			// sum.setMag(maxspeed);
 
 			// Implement Reynolds: Steering = Desired - Velocity
-			sum.normalize();
-			sum.multiply(maxspeed);
-			Vector2d steer = Vector2d.sub(sum, velocity);
+			// sum.normalize();
+			// sum.multiply(maxspeed);
+			Vector2d steer = Vector2d.sub(sum, Vector2d.multiply(velocity,sum.norm()/velocity.norm()));
 			steer.limit(maxforce);
 			return steer;
 		} 
@@ -236,5 +229,6 @@ public class Boid1 implements Boid{
 	public Vector2d[] getLastForces() {
 		return lastForces;
 	}
+
 
 }
